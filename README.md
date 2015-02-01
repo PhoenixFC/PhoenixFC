@@ -1,2 +1,5 @@
+![](logo.png)
 # PhoenixFC
-My attempt at writing a quad copter flight controller from scratch.
+A potentially disastrous attempt at writing a quadcopter flight controller from scratch.
+
+
