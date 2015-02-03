@@ -14,7 +14,7 @@ public:
   int readThrottle();
   int readYaw();
   int readPitch();
-  int readRole();
+  int readroll();
 
 protected:
   int readChannel(PwmIn& channel, ChannelConfig config);
@@ -24,11 +24,11 @@ private:
   PwmIn throttle;
   PwmIn yaw;
   PwmIn pitch;
-  PwmIn role;
+  PwmIn roll;
 
   ChannelConfig throttleConfig;
   ChannelConfig yawConfig;
   ChannelConfig pitchConfig;
-  ChannelConfig roleConfig;
+  ChannelConfig rollConfig;
 
 };

@@ -18,11 +18,7 @@ void loop(void)
 {
   myled1 = !myled1;
 
-  console.debug("Throttle:%4lu,", rx.readThrottle());
-  console.debug("Yaw:%4lu,", rx.readYaw());
-  console.debug("Pitch:%4lu,", rx.readPitch());
-  console.debug("Role:%4lu", rx.readRole());
-  console.debug("\n");
+  console.debug("Throttle:%4lu,Yaw:%4lu,Pitch:%4lu,Roll:%4lu;", rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readroll());
 
   wait(0.1);
 }
