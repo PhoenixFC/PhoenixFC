@@ -18,9 +18,14 @@ void loop(void)
 {
   myled1 = !myled1;
 
-  console.debug("Throttle:%4lu,Yaw:%4lu,Pitch:%4lu,Roll:%4lu;", rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readroll());
+  if( console.readable() ) {
+    console.read();
+    console.read();
 
-  wait(0.1);
+    // console.debug("Throttle:%4lu,Yaw:%4lu,Pitch:%4lu,Roll:%4lu;", rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readroll());
+    console.debug("CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;", rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readroll(), 0, 0);
+  }
+  wait(0.005);
 }
 
 int main()

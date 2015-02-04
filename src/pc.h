@@ -8,6 +8,10 @@ public:
   void debug(const char* msg);
   void debug(const char* format, int value);
   void debug(const char* format, int value1, int value2, int value3, int value4);
+  void debug(const char* format, int value1, int value2, int value3, int value4, int value5, int value6);
+
+  void read();
+  bool readable();
 
 private:
   Serial serial;

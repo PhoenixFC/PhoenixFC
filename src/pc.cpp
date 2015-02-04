@@ -20,4 +20,19 @@ void Computer::debug(const char* format, int value1, int value2, int value3, int
   serial.printf(format, value1, value2, value3, value4);
 }
 
+void Computer::debug(const char* format, int value1, int value2, int value3, int value4, int value5, int value6)
+{
+  serial.printf(format, value1, value2, value3, value4, value5, value6);
+}
+
+void Computer::read()
+{
+  serial.getc();
+}
+
+bool Computer::readable()
+{
+  return serial.readable();
+}
+
 Computer console = Computer();
