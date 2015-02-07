@@ -3,10 +3,10 @@
 #include "receiver_config.h"
 #include "pwm_receiver.h"
 
-DigitalOut myled1(LED1);
-DigitalOut myled2(LED2);
-DigitalOut myled3(LED3);
-DigitalOut myled4(LED4);
+DigitalOut led1(LED1);
+DigitalOut led2(LED2);
+DigitalOut led3(LED3);
+DigitalOut led4(LED4);
 
 Computer console = Computer();
 
@@ -34,6 +34,7 @@ void loop(void)
     //   rxPacket.throttle, rxPacket.yaw, rxPacket.pitch, rxPacket.roll, 0, 0
     // );
 
+    led1 = !led1;
     console.debug(
       "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
       rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readRoll(), 0, 0

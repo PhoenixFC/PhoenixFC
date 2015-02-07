@@ -24,15 +24,12 @@ public:
   // RxPacket readPacket();
 
 protected:
-  int readChannel(PwmIn& channel, ChannelConfig config);
+  int readChannel(ChannelConfig config);
+  PwmIn& getChannel(int number);
 
 private:
 
   ReceiverConfig *config;
-
-  PwmIn throttle;
-  PwmIn yaw;
-  PwmIn pitch;
-  PwmIn roll;
+  PwmIn channels[6];
 
 };
