@@ -1,29 +1,22 @@
 #include "pwm_receiver.h"
 #include "PwmIn.h"
-#include "pc.h"
 
 #define CHANNEL_SCALE 1000000
 
-PwmReceiver::PwmReceiver() :
-  throttle(PwmIn(p21)), yaw(PwmIn(p22)), pitch(PwmIn(p23)), roll(PwmIn(p24)),
-  throttleConfig(ChannelConfig()), yawConfig(ChannelConfig()), pitchConfig(ChannelConfig()), rollConfig(ChannelConfig())
+PwmReceiver::PwmReceiver(ReceiverConfig *aConfig) :
+  throttle(PwmIn(p21)), yaw(PwmIn(p22)), pitch(PwmIn(p23)), roll(PwmIn(p24)), config(aConfig)
 {
-  // TODO: Load config from a config file written from the PhoenixFC app.
-  throttleConfig.minValue = 1120;
-  throttleConfig.maxValue = 1943;
-
-  yawConfig.minValue = 1120;
-  yawConfig.maxValue = 1933;
-  yawConfig.reverse = true;
-
-  pitchConfig.minValue = 1122;
-  pitchConfig.maxValue = 1927;
-
-  rollConfig.minValue = 1125;
-  rollConfig.maxValue = 1933;
-  rollConfig.reverse = true;
-
 }
+
+// RxPacket PwmReceiver::readPacket()
+// {
+//   RxPacket newPacket();
+//   newPacket.throttle = readThrottle();
+//   newPacket.yaw = readYaw();
+//   newPacket.pitch = readPitch();
+//   newPacket.roll = readRoll();
+//   return newPacket;
+// }
 
 int PwmReceiver::readChannel(PwmIn& channel, ChannelConfig config)
 {
@@ -42,20 +35,20 @@ int PwmReceiver::readChannel(PwmIn& channel, ChannelConfig config)
 
 int PwmReceiver::readThrottle()
 {
-  return readChannel(throttle, throttleConfig);
+  return readChannel(throttle, config->throttleConfig());
 }
 
 int PwmReceiver::readYaw()
 {
-  return readChannel(yaw, yawConfig);
+  return readChannel(yaw, config->yawConfig());
 }
 
 int PwmReceiver::readPitch()
 {
-  return readChannel(pitch, pitchConfig);
+  return readChannel(pitch, config->pitchConfig());
 }
 
-int PwmReceiver::readroll()
+int PwmReceiver::readRoll()
 {
-  return readChannel(roll, rollConfig);
+  return readChannel(roll, config->rollConfig());
 }

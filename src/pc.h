@@ -1,5 +1,8 @@
 #include "mbed.h"
 
+#ifndef COMPUTER
+#define COMPUTER
+
 class Computer {
 
 public:
@@ -10,6 +13,8 @@ public:
   void debug(const char* format, int value1, int value2, int value3, int value4);
   void debug(const char* format, int value1, int value2, int value3, int value4, int value5, int value6);
 
+  void debug(const char* format, char *value);
+
   void read();
   bool readable();
 
@@ -18,4 +23,6 @@ private:
 
 };
 
-extern Computer console;
+// extern Computer console;
+
+#endif

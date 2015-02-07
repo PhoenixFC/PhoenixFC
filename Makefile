@@ -41,11 +41,11 @@ MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/$(SYSTEM_NAME).o
 # directories
 INC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM
 # app headers directories (remove comment and add more files)
-INC_DIRS += src src/receiver libs/PwmIn
+INC_DIRS += src src/receiver libs/PwmIn libs/ConfigFile
 
 SRC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM .
 # app source directories (remove comment and add more files)
-SRC_DIRS += src src/receiver libs/PwmIn
+SRC_DIRS += src src/receiver libs/PwmIn libs/ConfigFile
 
 OUT_DIR = build
 

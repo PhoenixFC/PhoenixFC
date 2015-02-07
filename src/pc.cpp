@@ -15,6 +15,11 @@ void Computer::debug(const char* format, int value)
   serial.printf(format, value);
 }
 
+void Computer::debug(const char* format, char *value)
+{
+  serial.printf(format, value);
+}
+
 void Computer::debug(const char* format, int value1, int value2, int value3, int value4)
 {
   serial.printf(format, value1, value2, value3, value4);
@@ -35,4 +40,4 @@ bool Computer::readable()
   return serial.readable();
 }
 
-Computer console = Computer();
+// Computer console = Computer();
