@@ -15,7 +15,7 @@ public:
 
   void debug(const char* format, char *value);
 
-  void read();
+  char read();
   bool readable();
 
 private:

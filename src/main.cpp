@@ -25,20 +25,31 @@ void init(void)
 void loop(void)
 {
   if( console.readable() ) {
-    console.read();
-    console.read();
-
-    // rxPacket = rx.readPacket();
-    // console.debug(
-    //   "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
-    //   rxPacket.throttle, rxPacket.yaw, rxPacket.pitch, rxPacket.roll, 0, 0
-    // );
 
     led1 = !led1;
-    console.debug(
-      "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
-      rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readRoll(), 0, 0
-    );
+
+    char char1 = console.read();
+    char char2 = console.read();
+
+    if( char1 == 'R' )
+    {
+      if( char2 == 'X' )
+      {
+        console.debug(
+          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
+          rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readRoll(), 0, 0
+        );
+      }
+      else
+      {
+        console.debug(
+          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
+          rx.readChannel(1), rx.readChannel(2), rx.readChannel(3), rx.readChannel(4), rx.readChannel(5), rx.readChannel(6)
+        );
+      }
+    }
+
+
   }
   wait(0.005);
 }

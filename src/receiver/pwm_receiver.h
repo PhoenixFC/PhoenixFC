@@ -21,10 +21,12 @@ public:
   int readPitch();
   int readRoll();
 
+  int readChannel(int number);
+
   // RxPacket readPacket();
 
 protected:
-  int readChannel(ChannelConfig config);
+  int readChannelWithConfig(ChannelConfig config);
   PwmIn& getChannel(int number);
 
 private:

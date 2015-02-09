@@ -7,7 +7,7 @@ PwmReceiver::PwmReceiver(ReceiverConfig *aConfig) :
   config(aConfig),
   channels({PwmIn(p21), PwmIn(p22), PwmIn(p23), PwmIn(p24), PwmIn(p25), PwmIn(p26)})
 {
-  
+
 }
 
 // RxPacket PwmReceiver::readPacket()
@@ -20,10 +20,15 @@ PwmReceiver::PwmReceiver(ReceiverConfig *aConfig) :
 //   return newPacket;
 // }
 
-int PwmReceiver::readChannel(ChannelConfig config)
+int PwmReceiver::readChannel(int number)
 {
-  PwmIn& channel = getChannel(config.channel);
-  int rawValue = (int)(channel.pulsewidth() * CHANNEL_SCALE);
+  PwmIn& channel = getChannel(number);
+  return (int)(channel.pulsewidth() * CHANNEL_SCALE);
+}
+
+int PwmReceiver::readChannelWithConfig(ChannelConfig config)
+{
+  int rawValue = readChannel(config.channel);
   if( rawValue <= config.minValue ) {
     return config.reverse ? 1000 : 0;
   }
@@ -38,22 +43,22 @@ int PwmReceiver::readChannel(ChannelConfig config)
 
 int PwmReceiver::readThrottle()
 {
-  return readChannel(config->throttleConfig());
+  return readChannelWithConfig(config->throttleConfig());
 }
 
 int PwmReceiver::readYaw()
 {
-  return readChannel(config->yawConfig());
+  return readChannelWithConfig(config->yawConfig());
 }
 
 int PwmReceiver::readPitch()
 {
-  return readChannel(config->pitchConfig());
+  return readChannelWithConfig(config->pitchConfig());
 }
 
 int PwmReceiver::readRoll()
 {
-  return readChannel(config->rollConfig());
+  return readChannelWithConfig(config->rollConfig());
 }
 
 PwmIn& PwmReceiver::getChannel(int number)
