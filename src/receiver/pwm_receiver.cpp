@@ -5,20 +5,10 @@
 
 PwmReceiver::PwmReceiver(ReceiverConfig *aConfig) :
   config(aConfig),
-  channels({PwmIn(p21), PwmIn(p22), PwmIn(p23), PwmIn(p24), PwmIn(p25), PwmIn(p26)})
+  channels({PwmIn(p5), PwmIn(p6), PwmIn(p7), PwmIn(p8)})
 {
 
 }
-
-// RxPacket PwmReceiver::readPacket()
-// {
-//   RxPacket newPacket();
-//   newPacket.throttle = readThrottle();
-//   newPacket.yaw = readYaw();
-//   newPacket.pitch = readPitch();
-//   newPacket.roll = readRoll();
-//   return newPacket;
-// }
 
 int PwmReceiver::readChannel(int number)
 {

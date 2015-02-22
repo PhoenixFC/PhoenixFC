@@ -12,6 +12,11 @@ Serial console(USBTX,USBRX);
 ReceiverConfig rxConfig = ReceiverConfig();
 PwmReceiver rx = PwmReceiver(&rxConfig);
 
+PwmOut motor1(p21);
+PwmOut motor2(p22);
+PwmOut motor3(p23);
+PwmOut motor4(p24);
+
 void init(void)
 {
   console.printf("Starting up PhoenixFC!\n");
@@ -19,9 +24,23 @@ void init(void)
   console.printf("Loading config file...");
   rxConfig.load();
   console.printf("done.\n");
+
+  console.printf("Initialise motors...");
+  motor1.period(0.020); // 50 Hz - 20ms period
+  motor2.period(0.020);
+  motor3.period(0.020);
+  motor4.period(0.020);
+  wait(0.5);
+  float armedPulse = 0.001; // 0% throttle
+  motor1.pulsewidth(armedPulse);
+  motor2.pulsewidth(armedPulse);
+  motor3.pulsewidth(armedPulse);
+  motor4.pulsewidth(armedPulse);
+  console.printf("done.\n");
+
 }
 
-void loop(void)
+void main_loop(void)
 {
   if( console.readable() ) {
 
@@ -35,33 +54,30 @@ void loop(void)
       if( char2 == 'X' )
       {
         console.printf(
-          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
+          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu;",
           rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readRoll(), 0, 0
         );
       }
       else
       {
         console.printf(
-          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
-          rx.readChannel(1), rx.readChannel(2), rx.readChannel(3), rx.readChannel(4), rx.readChannel(5), rx.readChannel(6)
+          "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu;",
+          rx.readChannel(1), rx.readChannel(2), rx.readChannel(3), rx.readChannel(4)
         );
       }
     }
 
-
   }
+
+  int throttle = rx.readThrottle();
+  float output = ((float)throttle/1000000)+0.001;
+  motor1.pulsewidth(output);
+  motor2.pulsewidth(output);
+  motor3.pulsewidth(output);
+  motor4.pulsewidth(output);
+
   wait(0.005);
 }
-
-// void read_rx_loop(void)
-// {
-//   PwmReceiver rx = PwmReceiver();
-//
-//   while (1) {
-//     rxPacket = rx.readPacket();
-//     Thread::wait(50);
-//   }
-// }
 
 void printChannelConfig(ChannelConfig config)
 {
@@ -86,14 +102,8 @@ void printChannelConfigs()
 int main()
 {
     init();
-
-    // Thread thread(read_rx_loop);
-
     while (1) {
-        loop();
-        // read_rx_loop();
-        // printChannelConfigs();
-
-        // wait();
+        main_loop();
+        wait(0.005);
     }
 }
