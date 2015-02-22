@@ -195,10 +195,10 @@ print_info:
 	@echo ' '
 
 ifdef LPC_DEPLOY
-	DEPLOY_COMMAND = $(subst PROJECT,$(PROJECT),$(LPC_DEPLOY))
-	deploy:
-		@echo 'Deploying to target.'
-		$(Q) $(DEPLOY_COMMAND)
+DEPLOY_COMMAND = $(subst PROJECT,$(PROJECT),$(LPC_DEPLOY))
+deploy:
+	@echo 'Deploying to target.'
+	$(Q) $(DEPLOY_COMMAND)
 endif
 
 .PHONY: all clean print_info
