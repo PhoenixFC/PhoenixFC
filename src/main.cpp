@@ -1,5 +1,4 @@
 #include "mbed.h"
-#include "pc.h"
 #include "receiver_config.h"
 #include "pwm_receiver.h"
 
@@ -8,18 +7,18 @@ DigitalOut led2(LED2);
 DigitalOut led3(LED3);
 DigitalOut led4(LED4);
 
-Computer console = Computer();
+Serial console(USBTX,USBRX);
 
 ReceiverConfig rxConfig = ReceiverConfig();
 PwmReceiver rx = PwmReceiver(&rxConfig);
 
 void init(void)
 {
-  console.debug("Starting up PhoenixFC!\n");
+  console.printf("Starting up PhoenixFC!\n");
 
-  console.debug("Loading config file...");
+  console.printf("Loading config file...");
   rxConfig.load();
-  console.debug("done.\n");
+  console.printf("done.\n");
 }
 
 void loop(void)
@@ -28,21 +27,21 @@ void loop(void)
 
     led1 = !led1;
 
-    char char1 = console.read();
-    char char2 = console.read();
+    char char1 = console.getc();
+    char char2 = console.getc();
 
     if( char1 == 'R' )
     {
       if( char2 == 'X' )
       {
-        console.debug(
+        console.printf(
           "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
           rx.readThrottle(), rx.readYaw(), rx.readPitch(), rx.readRoll(), 0, 0
         );
       }
       else
       {
-        console.debug(
+        console.printf(
           "CH1:%4lu,CH2:%4lu,CH3:%4lu,CH4:%4lu,CH5:%4lu,CH6:%4lu;",
           rx.readChannel(1), rx.readChannel(2), rx.readChannel(3), rx.readChannel(4), rx.readChannel(5), rx.readChannel(6)
         );
@@ -66,21 +65,21 @@ void loop(void)
 
 void printChannelConfig(ChannelConfig config)
 {
-  console.debug("Min Value: %4lu ", config.minValue);
-  console.debug("Max Value: %4lu ", config.maxValue);
-  console.debug("Reverse: %d ", config.reverse);
-  console.debug("Channel: %lu\n", config.channel);
+  console.printf("Min Value: %4lu ", config.minValue);
+  console.printf("Max Value: %4lu ", config.maxValue);
+  console.printf("Reverse: %d ", config.reverse);
+  console.printf("Channel: %lu\n", config.channel);
 }
 
 void printChannelConfigs()
 {
-  console.debug("Throttle Config: ");
+  console.printf("Throttle Config: ");
   printChannelConfig(rxConfig.throttleConfig());
-  console.debug("Yaw Config: ");
+  console.printf("Yaw Config: ");
   printChannelConfig(rxConfig.yawConfig());
-  console.debug("Pitch Config: ");
+  console.printf("Pitch Config: ");
   printChannelConfig(rxConfig.pitchConfig());
-  console.debug("Roll Config: ");
+  console.printf("Roll Config: ");
   printChannelConfig(rxConfig.rollConfig());
 }
 

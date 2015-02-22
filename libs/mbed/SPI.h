@@ -59,7 +59,7 @@ public:
      *  @param miso SPI Master In, Slave Out pin
      *  @param sclk SPI Clock pin
      */
-    SPI(PinName mosi, PinName miso, PinName sclk);
+    SPI(PinName mosi, PinName miso, PinName sclk, PinName _unused=NC);
 
     /** Configure the data transmission format
      *
@@ -91,6 +91,10 @@ public:
      *    Response from the SPI slave
     */
     virtual int write(int value);
+
+public:
+    virtual ~SPI() {
+    }
 
 protected:
     spi_t _spi;

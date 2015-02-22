@@ -16,7 +16,7 @@
 #ifndef MBED_H
 #define MBED_H
 
-#define MBED_LIBRARY_VERSION 30
+#define MBED_LIBRARY_VERSION 93
 
 #include "platform.h"
 
@@ -25,7 +25,7 @@
 #include <time.h>
 
 // mbed Debug libraries
-#include "error.h"
+#include "mbed_error.h"
 #include "mbed_interface.h"
 
 // mbed Peripheral components
@@ -48,6 +48,7 @@
 #include "I2CSlave.h"
 #include "Ethernet.h"
 #include "CAN.h"
+#include "RawSerial.h"
 
 // mbed Internal components
 #include "Timer.h"

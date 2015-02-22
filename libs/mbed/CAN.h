@@ -33,7 +33,7 @@ class CANMessage : public CAN_Message {
 public:
     /** Creates empty CAN message.
      */
-    CANMessage() {
+    CANMessage() : CAN_Message() {
         len    = 8;
         type   = CANData;
         format = CANStandard;
@@ -131,12 +131,13 @@ public:
     /** Read a CANMessage from the bus.
      *
      *  @param msg A CANMessage to read to.
+     *  @param handle message filter handle (0 for any message)
      *
      *  @returns
      *    0 if no message arrived,
      *    1 if message arrived
      */
-    int read(CANMessage &msg);
+    int read(CANMessage &msg, int handle = 0);
 
     /** Reset CAN interface.
      *
@@ -158,17 +159,30 @@ public:
         GlobalTest,
         SilentTest
     };
-    
+
     /** Change CAN operation to the specified mode
      *
      *  @param mode The new operation mode (CAN::Normal, CAN::Silent, CAN::LocalTest, CAN::GlobalTest, CAN::SilentTest)
      *
      *  @returns
      *    0 if mode change failed or unsupported,
-     *    1 if mode change was successful     
+     *    1 if mode change was successful
      */
     int mode(Mode mode);
-    
+
+    /** Filter out incomming messages
+     *
+     *  @param id the id to filter on
+     *  @param mask the mask applied to the id
+     *  @param format format to filter on (Default CANAny)
+     *  @param handle message filter handle (Optional)
+     *
+     *  @returns
+     *    0 if filter change failed or unsupported,
+     *    new filter handle if successful
+     */
+    int filter(unsigned int id, unsigned int mask, CANFormat format = CANAny, int handle = 0);
+
     /** Returns number of read errors to detect read overflow errors.
      */
     unsigned char rderror();
@@ -188,7 +202,7 @@ public:
         BeIrq,
         IdIrq
     };
-    
+
     /** Attach a function to call whenever a CAN frame received interrupt is
      *  generated.
      *

@@ -1,7 +1,6 @@
 #include "mbed.h"
 #include "ConfigFile.h"
 #include "channel_config.h"
-#include "pc.h"
 
 #ifndef RECEIVER_CONFIG
 #define RECEIVER_CONFIG

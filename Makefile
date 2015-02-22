@@ -1,16 +1,37 @@
 #
-# Makefile for the FlightController
+# File: Makefile for all mbed supported platforms (ARM GCC)
+#
+# Copyright (c) 10.2013, 0xc0170
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # SUPPORTED PLATFORMS GCC_ARM
-#        LPC1768
+#	KL05Z
+#	KL25Z
+#	KL46Z
+#	LPC1768
+#	LPC11U24
+#	LPC11U24_301
+#	LPC1347
+#	LPC1114
+#	LPC11C24
+#	LPC11U35_401
+#	STM32F407
+BOARD = LPC1768
+include Platforms
 
-# Platform
-LINKER_NAME = LPC1768
-STARTUP_NAME = startup_LPC17xx
-SYSTEM_NAME = system_LPC17xx
-TARGET_BOARD = TARGET_LPC1768
-CPU = cortex-m3
-
-LPC_DEPLOY=rm /Volumes/MBED/*.bin; cp build/$(TARGET).bin /Volumes/MBED/$(TARGET).bin
+# path to the mbed library
+MBED_DIR = libs/mbed
 
 # toolchain specific
 TOOLCHAIN = arm-none-eabi-
@@ -23,12 +44,14 @@ AR = $(TOOLCHAIN)ar
 
 # application specific
 INSTRUCTION_MODE = thumb
-TARGET = PhoenixFC
+TARGET = mbed
 TARGET_EXT = elf
-MBED_DIR = libs/mbed
 LD_SCRIPT = $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/$(LINKER_NAME).ld
 
-CC_SYMBOLS = -D$(TARGET_BOARD) -DTOOLCHAIN_GCC_ARM -DNDEBUG
+# command used to deploy to the board
+LPC_DEPLOY=rm /Volumes/MBED/*.bin; cp build/$(TARGET).bin /Volumes/MBED/$(TARGET).bin
+
+CC_SYMBOLS = -D$(TARGET_BOARD) -DTOOLCHAIN_GCC_ARM -DNDEBUG -D__CORTEX_M3 -DTOOLCHAIN_GCC
 
 LIB_DIRS = $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM
 LIBS = -lmbed -lstdc++ -lsupc++ -lm -lgcc -lc -lnosys
@@ -37,24 +60,44 @@ MBED_OBJ = $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/cmsis_nvic.o
 MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/$(STARTUP_NAME).o
 MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/retarget.o
 MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/$(SYSTEM_NAME).o
+MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/board.o
+ifneq ("$(wildcard $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/mbed_overrides.o)","")
+	MBED_OBJ += $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM/mbed_overrides.o
+endif
 
 # directories
 INC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM
+INC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)
+INC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)/$(TARGET_SPECIFIC)
+# rtos / rtx
+INC_DIRS += libs/rtos libs/rtx/TARGET_CORTEX_M libs/rtx/TARGET_CORTEX_M/TARGET_M3/TOOLCHAIN_GCC
+# ConfigFile
+INC_DIRS += libs/ConfigFile
+# PwmIn
+INC_DIRS += libs/PwmIn
 # app headers directories (remove comment and add more files)
-INC_DIRS += src src/receiver libs/PwmIn libs/ConfigFile
+INC_DIRS += src/receiver
 
-SRC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM .
+SRC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM src
+SRC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)
+SRC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)/$(TARGET_SPECIFIC)
+# rtos / rtx
+SRC_DIRS += libs/rtos libs/rtx/TARGET_CORTEX_M libs/rtx/TARGET_CORTEX_M/TARGET_M3/TOOLCHAIN_GCC
+# ConfigFile
+SRC_DIRS += libs/ConfigFile
+# PwmIn
+SRC_DIRS += libs/PwmIn
 # app source directories (remove comment and add more files)
-SRC_DIRS += src src/receiver libs/PwmIn libs/ConfigFile
+SRC_DIRS += src/receiver
 
 OUT_DIR = build
 
 INC_DIRS_F = -I. $(patsubst %, -I%, $(INC_DIRS))
 
 ifeq ($(strip $(OUT_DIR)), )
-        OBJ_FOLDER =
+	OBJ_FOLDER =
 else
-        OBJ_FOLDER = $(strip $(OUT_DIR))/
+	OBJ_FOLDER = $(strip $(OUT_DIR))/
 endif
 
 COMPILER_OPTIONS  = -g -ggdb -Os -Wall -fno-strict-aliasing -fno-rtti
@@ -103,60 +146,58 @@ S_OBJS := $(patsubst %.s,$(OBJ_FOLDER)%.o,$(notdir $(S_SRCS)))
 VPATH := $(SRC_DIRS)
 
 $(OBJ_FOLDER)%.o : %.c
-		@echo 'Building file: $(@F)'
-		@echo 'Invoking: MCU C Compiler'
-		$(CC) $(CFLAGS) $< -o $@
-		@echo 'Finished building: $(@F)'
-		@echo ' '
+	@echo 'Building file: $(@F)'
+	@echo 'Invoking: MCU C Compiler'
+	$(CC) $(CFLAGS) $< -o $@
+	@echo 'Finished building: $(@F)'
+	@echo ' '
 
 $(OBJ_FOLDER)%.o : %.cpp
-		@echo 'Building file: $(@F)'
-		@echo 'Invoking: MCU C++ Compiler'
-		$(CXX) $(CXXFLAGS) $< -o $@
-		@echo 'Finished building: $(@F)'
-		@echo ' '
+	@echo 'Building file: $(@F)'
+	@echo 'Invoking: MCU C++ Compiler'
+	$(CXX) $(CXXFLAGS) $< -o $@
+	@echo 'Finished building: $(@F)'
+	@echo ' '
 
 $(OBJ_FOLDER)%.o : %.s
-		@echo 'Building file: $(@F)'
-		@echo 'Invoking: MCU Assembler'
-		$(AS) $(ASFLAGS) $< -o $@
-		@echo 'Finished building: $(@F)'
-		@echo ' '
+	@echo 'Building file: $(@F)'
+	@echo 'Invoking: MCU Assembler'
+	$(AS) $(ASFLAGS) $< -o $@
+	@echo 'Finished building: $(@F)'
+	@echo ' '
 
 all: create_outputdir $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) print_info
 
 create_outputdir:
-		@echo 'Creating output directory'
-		$(shell mkdir $(OBJ_FOLDER) 2>/dev/null)
-		@echo ' '
+	$(shell mkdir $(OBJ_FOLDER) 2>/dev/null)
 
 # Tool invocations
 $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT): $(LD_SCRIPT) $(C_OBJS) $(CPP_OBJS) $(S_OBJS) $(MBED_OBJ)
-		@echo 'Building target: $@'
-		@echo 'Invoking: MCU Linker'
-		$(LD) $(LD_OPTIONS) $(CPP_OBJS) $(C_OBJS) $(S_OBJS) $(MBED_OBJ) $(LIBS) -o $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT)
-		@echo 'Finished building target: $@'
-		@echo ' '
+	@echo 'Building target: $@'
+	@echo 'Invoking: MCU Linker'
+	$(LD) $(LD_OPTIONS) $(CPP_OBJS) $(C_OBJS) $(S_OBJS) $(MBED_OBJ) $(LIBS) -o $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT)
+	@echo 'Finished building target: $@'
+	@echo ' '
 
 # Other Targets
 clean:
-		@echo 'Removing entire out directory'
-		$(RM) $(TARGET).$(TARGET_EXT) $(TARGET).bin $(TARGET).map $(OBJ_FOLDER)*.* $(OBJ_FOLDER)
-		@echo ' '
+	@echo 'Removing entire out directory'
+	$(RM) $(TARGET).$(TARGET_EXT) $(TARGET).bin $(TARGET).map $(OBJ_FOLDER)*.* $(OBJ_FOLDER)
+	@echo ' '
 
 print_info:
-		@echo 'Printing size'
-		arm-none-eabi-size --totals $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT)
-		arm-none-eabi-objcopy -O srec $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) $(OBJ_FOLDER)$(TARGET).s19
-		arm-none-eabi-objcopy -O binary -v $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) $(OBJ_FOLDER)$(TARGET).bin
-		arm-none-eabi-objdump -D $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) > $(OBJ_FOLDER)$(TARGET).lst
-		arm-none-eabi-nm $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) > $(OBJ_FOLDER)$(TARGET)-symbol-table.txt
-		@echo ' '
+	@echo 'Printing size'
+	arm-none-eabi-size --totals $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT)
+	arm-none-eabi-objcopy -O srec $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) $(OBJ_FOLDER)$(TARGET).s19
+	arm-none-eabi-objcopy -O binary -v $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) $(OBJ_FOLDER)$(TARGET).bin
+	arm-none-eabi-objdump -D $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) > $(OBJ_FOLDER)$(TARGET).lst
+	arm-none-eabi-nm $(OBJ_FOLDER)$(TARGET).$(TARGET_EXT) > $(OBJ_FOLDER)$(TARGET)-symbol-table.txt
+	@echo ' '
 
 ifdef LPC_DEPLOY
-DEPLOY_COMMAND = $(subst PROJECT,$(PROJECT),$(LPC_DEPLOY))
-deploy:
-		@echo Deploying to target.
+	DEPLOY_COMMAND = $(subst PROJECT,$(PROJECT),$(LPC_DEPLOY))
+	deploy:
+		@echo 'Deploying to target.'
 		$(Q) $(DEPLOY_COMMAND)
 endif
 
