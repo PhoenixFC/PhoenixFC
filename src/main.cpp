@@ -2,6 +2,7 @@
 #include "receiver_config.h"
 #include "pwm_receiver.h"
 #include "rtos.h"
+#include "MPU6050.h"
 
 DigitalOut led1(LED1);
 DigitalOut led2(LED2);
@@ -18,27 +19,42 @@ PwmOut motor2(p22);
 PwmOut motor3(p23);
 PwmOut motor4(p24);
 
+MPU6050 mpu;
+int16_t ax, ay, az;
+int16_t gx, gy, gz;
+
 void init(void)
 {
   console.printf("Starting up PhoenixFC!\n");
-
-  console.printf("Loading config file...");
-  rxConfig.load();
-  console.printf("done.\n");
 
   console.printf("Initialise motors...");
   motor1.period(0.020); // 50 Hz - 20ms period
   motor2.period(0.020);
   motor3.period(0.020);
   motor4.period(0.020);
-  wait(0.5);
   float armedPulse = 0.001; // 0% throttle
   motor1.pulsewidth(armedPulse);
   motor2.pulsewidth(armedPulse);
   motor3.pulsewidth(armedPulse);
   motor4.pulsewidth(armedPulse);
   console.printf("done.\n");
+  wait(1.0);
 
+  console.printf("Loading config file...");
+  rxConfig.load();
+  console.printf("done.\n");
+
+  console.printf("Initializing MPU... \n");
+  mpu.initialize();
+
+  console.printf("Test Connection... \n");
+  bool mpu6050TestResult = mpu.testConnection();
+
+  if(mpu6050TestResult) {
+    console.printf("Test passed \n");
+  } else {
+    console.printf("Test failed \n");
+  }
 }
 
 void usb_loop(void const *args)
@@ -67,7 +83,16 @@ void usb_loop(void const *args)
             rx.readChannel(1), rx.readChannel(2), rx.readChannel(3), rx.readChannel(4), 0, 0
           );
       }
+      else if( char1 == 'S' && char2 == 'A' )
+      {
+          // Output the raw values
+          mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
+          console.printf(
+            "AX:%4i,AY:%4i,AZ:%4i,GX:%4i,GY:%4i,GZ:%4i;",
+            ax, ay, az, gx, gy, gz
+          );
+      }
     }
     Thread::wait(20); // 50Hz / 20ms - Currently matching the Rx input speed.
   }

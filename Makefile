@@ -71,11 +71,10 @@ INC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)
 INC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)/$(TARGET_SPECIFIC)
 # rtos / rtx
 INC_DIRS += libs/rtos libs/rtx/TARGET_CORTEX_M libs/rtx/TARGET_CORTEX_M/TARGET_M3/TOOLCHAIN_GCC
-# ConfigFile
 INC_DIRS += libs/ConfigFile
-# PwmIn
 INC_DIRS += libs/PwmIn
-# app headers directories (remove comment and add more files)
+INC_DIRS += libs/MPU6050
+# source files
 INC_DIRS += src/receiver
 
 SRC_DIRS = $(MBED_DIR) $(MBED_DIR)/$(TARGET_BOARD) $(MBED_DIR)/$(TARGET_BOARD)/TOOLCHAIN_GCC_ARM src
@@ -83,11 +82,10 @@ SRC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)
 SRC_DIRS += $(MBED_DIR)/$(TARGET_BOARD)/$(TARGET_VENDOR)/$(TARGET_FAMILY)/$(TARGET_SPECIFIC)
 # rtos / rtx
 SRC_DIRS += libs/rtos libs/rtx/TARGET_CORTEX_M libs/rtx/TARGET_CORTEX_M/TARGET_M3/TOOLCHAIN_GCC
-# ConfigFile
 SRC_DIRS += libs/ConfigFile
-# PwmIn
 SRC_DIRS += libs/PwmIn
-# app source directories (remove comment and add more files)
+SRC_DIRS += libs/MPU6050
+# source files
 SRC_DIRS += src/receiver
 
 OUT_DIR = build
